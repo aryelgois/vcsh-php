@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Install Apache2, MySQL, PHP7, phpmyadmin and some libraries
+#   env APACHE_DIR Path to apache configuration directory (/etc/apache2)
+
+set -e
+
+#
+# Pre install
+#
+
+# Update
+sudo apt-get update
+
+#
+# Install packages
+#
+
+sudo apt-get install -y \
+    apache2          `: apache server` \
+    apache2-utils    `: provides 12 commands, especially "ab"` \
+    mysql-server     `: MySQL server` \
+    mysql-client     `: MySQL client` \
+    php7.0           `: PHP7` \
+    libapache2-mod-php7.0 `: apache lib for php` \
+    phpmyadmin       `: web UI for MySQL` \
+    \
+    `: php libs` \
+    php7.0-mysql php7.0-curl php7.0-zip
+
+#
+# Configurations
+#
+
+# Firewall
+if hash ufw 2> /dev/null; then
+    sudo ufw allow Apache
+fi
+
+# Server directory structure
+sudo chown $USER:$USER /srv
+mkdir /srv/{80,443,4000,8000,8008,8080}
+
+# Test file
+if [[ ! -e /srv/80/index.php ]]; then
+    cat <<EOF > /srv/80/index.php
+<?php
+phpinfo();
+EOF
+fi
+
+# Apache
+APACHE_DIR="${APACHE_DIR:-/etc/apache2}"
+ENABLED="$APACHE_DIR/sites-enabled"
+AVAIL="$APACHE_DIR/sites-available"
+
+sudo a2enmod rewrite
+sudo sed -i '
+    \:^<Directory /var/www/>:,\:</Directory>: {
+        /^<Directory/ s:/.*$:/srv/>:
+        /AllowOverride/ s/None/All/
+    }
+' "$APACHE_DIR/apache2.conf"
+
+sudo rm "$ENABLED"/000-default.conf
+sudo mv "$AVAIL"/000-default.conf "$AVAIL"/80.conf
+sudo sed -i '/^\tDocumentRoot/ s:/.*$:/srv/80:' "$AVAIL"/80.conf
+sudo ln -s ../sites-available/80.conf "$ENABLED"/
+
+service apache2 restart
+
+# Good to go
+echo Done. Try to access localhost

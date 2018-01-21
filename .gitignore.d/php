@@ -1,0 +1,17 @@
+*
+!/.config
+!/.config/mr
+!/.config/mr/available.d
+!/.config/mr/available.d/php.vcsh
+!/.config/mr/config.d
+!/.config/mr/config.d/php.vcsh
+!/.gitignore.d
+!/.gitignore.d/php
+!/.config/composer
+!/.config/composer/*
+!/.config/composer/*/*
+/.config/composer/vendor/
+/.config/composer/keys*
+!/bin
+!/bin/,setup-composer
+!/bin/,setup-lamp
