@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+,setup-composer
+if [[ $? -eq 0 ]]; then
+    mkdir -p ~/.local/bin
+    mv composer.phar ~/.local/bin/composer
+else
+    >&2 echo 'ERROR: Could not install Composer'
+    exit 1
+fi
