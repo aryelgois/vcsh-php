@@ -7,11 +7,13 @@
 !/.config/mr/config.d/php.vcsh
 !/.gitignore.d
 !/.gitignore.d/php
+
 !/.config/composer
 !/.config/composer/*
 !/.config/composer/*/*
 /.config/composer/vendor/
 /.config/composer/keys*
+
 !/bin
 !/bin/,setup-composer
 !/bin/,setup-composer-global
